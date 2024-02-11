@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <title>Smart Inhale</title>
+
+        <!-- CSS FILES -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;700;900&display=swap" rel="stylesheet">
+
+        <link href="static/css/bootstrap.min.css" rel="stylesheet">
+        <link href="static/css/bootstrap-icons.css" rel="stylesheet">
+
+        <link rel="stylesheet" href="static/css/slick.css"/>
+
+        <link href="static/css/Style.css" rel="stylesheet">
+        
+<!--
+
+Tooplate 2127 Little Fashion
+
+https://www.tooplate.com/view/2127-little-fashion
+
+-->
+    </head>
+    
+    <body>
+        <div class="form-structor">
+            <div class="signup">
+                <form id="sign-up-form">
+                    <h2 class="form-title" id="signup"><span>or</span>Sign up</h2>
+                    <div class="form-holder">
+                        <input name="username" id="username" type="text" class="input" placeholder="Username" />
+                        <!-- <input type="email" class="input" placeholder="Email" /> -->
+                        <input name="password" id="password" type="password" class="input" placeholder="Password" />
+                    </div>
+                    <button id="submit-sign-up" class="submit-btn">Sign up</button>
+                </form>
+            </div>
+            <form id="sign-in-form">
+            <div class="login slide-up">
+                <div class="center">
+                        <h2 class="form-title" id="login"><span>or</span>Log in</h2>
+                        <div class="form-holder">
+                            <input name="username" id="username-login" class="input" placeholder="Username" />
+                            <input name="password" type="password" class="input" placeholder="Password" />
+                        </div>
+                        <button id="submit-sign-in" class="submit-btn">Log in</button>
+                        <p id="user-success-message" style="display: none">User created successfully. Please login</p>
+                        <p id="user-error-message" style="display: none">Password does not match</p>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <script>
+            console.clear();
+    
+    const loginBtn = document.getElementById('login');
+    const signupBtn = document.getElementById('signup');
+
+    const submitSignUp = document.getElementById('submit-sign-up');
+    submitSignUp.addEventListener('click', (e) => {
+        e.preventDefault();
+        const form = document.getElementById('sign-up-form');
+        const formData = new FormData(form);
+
+        fetch('/sign-up', {
+            method: "POST",
+            body: formData
+        }).then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                loginBtn.click();
+
+                const successMessage = document.getElementById("user-success-message");
+                successMessage.style.display = "block";
+
+                const loginUsername = document.getElementById("username-login");
+                loginUsername.setAttribute('value', formData.get('username'))
+            }
+        })
+    })
+
+    const submitBtn = document.getElementById('submit-sign-in');
+    submitBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        
+        const form = document.getElementById('sign-in-form');
+        const formData = new FormData(form);
+
+        fetch('/sign-in', {
+            method: "POST",
+            body: formData
+        }).then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.href = '/';
+            } else {
+                const userErrorMessage = document.getElementById("user-error-message");
+                userErrorMessage.style.display = "block";
+                userErrorMessage.innerText = data.message;
+            }
+        })
+        
+    })
+    
+    loginBtn.addEventListener('click', (e) => {
+        let parent = e.target.parentNode.parentNode;
+        Array.from(e.target.parentNode.parentNode.classList).find((element) => {
+            if(element !== "slide-up") {
+                parent.classList.add('slide-up')
+            }else{
+                signupBtn.parentNode.classList.add('slide-up')
+                parent.classList.remove('slide-up')
+            }
+        });
+    });
+    
+    signupBtn.addEventListener('click', (e) => {
+        let parent = e.target.parentNode;
+        Array.from(e.target.parentNode.classList).find((element) => {
+            if(element !== "slide-up") {
+                parent.classList.add('slide-up')
+            }else{
+                loginBtn.parentNode.parentNode.classList.add('slide-up')
+                parent.classList.remove('slide-up')
+            }
+        });
+    });
+        </script>
+        <!-- JAVASCRIPT FILES -->
+        <script src="static/js/jquery.min.js"></script>
+        <script src="static/js/bootstrap.bundle.min.js"></script>
+        <script src="static/js/Headroom.js"></script>
+        <script src="static/js/jQuery.headroom.js"></script>
+        <script src="static/js/slick.min.js"></script>
+        <script src="static/js/custom.js"></script>
+
+    </body>
+</html>

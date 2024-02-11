@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <title>Smart Inhale</title>
+
+        <!-- CSS FILES -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;700;900&display=swap" rel="stylesheet">
+
+        <link href="static/css/bootstrap.min.css" rel="stylesheet">
+        <link href="static/css/bootstrap-icons.css" rel="stylesheet">
+
+        <link rel="stylesheet" href="static/css/slick.css"/>
+
+        <link href="static/css/tooplate-little-fashion.css" rel="stylesheet">
+        <style>
+            .history-container {
+                margin-top: 100px;
+                padding: 20px;
+            }
+            .image-history {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 10px;
+                margin-top: 20px;
+            }
+
+            /* Add this style to your existing CSS */
+            .image-container {
+                position: relative;
+                text-align: center;
+                margin-bottom: 10px;
+            }
+
+            .history-img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+            }
+
+            .image p {
+            text-align: center;
+            margin-top: 5px;
+            }
+
+            .delete-button {
+                position: absolute;
+                top: 0;
+                right: 0;
+                background: none;
+                border: none;
+                color: white;
+                font-size: 20px;
+                cursor: pointer;
+            }
+        </style>
+        
+    </head>
+    
+    <body>
+
+        <section class="preloader">
+            <div class="spinner">
+                <span class="sk-inner-circle"></span>
+            </div>
+        </section>
+    
+        <main>
+
+            <nav class="navbar navbar-expand-lg">
+                <div class="container">
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <a class="navbar-brand" href="{{ url_for('home') }}">
+                        <strong><img src="static/images/Black_White_Modern_Handwriting_Design_Studio_Logo__2_-removebg-preview (1).png" alt=""></strong>
+                    </a>
+
+                    <div class="d-lg-none">
+                        <a href="{{ url_for('signin') }}" class="bi-person custom-icon me-3"></a>
+
+                        <a href="{{ url_for('history') }}" class="fas fa-camera"></a>
+                    </div>
+
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav mx-auto">
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('home') }}">Home</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('story') }}">Story</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('detection') }}">Detection</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link active" href="{{ url_for('history') }}">History</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('contact') }}">Contact</a>
+                            </li>
+                        </ul>
+
+                        <div class="d-none d-lg-block">
+                            <a href="{{ url_for('signin') }}" class="bi-person custom-icon me-3"></a>
+
+                            <a href="{{ url_for('detection') }}" class="bi-camera custom-icon"></a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </main>
+        <div class="history-container">
+            <div id="image-history" class="image-history"></div>
+        </div>
+
+        <!-- JAVASCRIPT FILES -->
+        <script src="static/js/jquery.min.js"></script>
+        <script src="static/js/bootstrap.bundle.min.js"></script>
+        <script src="static/js/Headroom.js"></script>
+        <script src="static/js/jQuery.headroom.js"></script>
+        <script src="static/js/slick.min.js"></script>
+        <script src="static/js/custom.js"></script>
+        <script defer>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const imageHistory = JSON.parse(localStorage.getItem('imageHistory')) || [];
+            const historyContainer = document.getElementById('image-history');
+
+            // Display image history on page load
+            imageHistory.forEach((imageDataWithStatus, index) => {
+            // Create a container for the image and its status
+            const imageContainer = document.createElement('div');
+            imageContainer.classList.add('image-container');
+
+            // Add attribute index
+            imageContainer.setAttribute('data-index', index);
+            
+            // Create the delete button
+            const deleteButton = document.createElement('button');
+            deleteButton.classList.add('delete-button');
+            deleteButton.textContent = 'x';
+            deleteButton.addEventListener('click', () => {
+                removeImage(index);
+            });
+
+            // Create the image element
+            const imageElement = document.createElement('img');
+            imageElement.src = imageDataWithStatus.url;
+            imageElement.classList.add('history-img');
+            imageContainer.appendChild(imageElement);
+
+            // Create the status element
+            const statusElement = document.createElement('p');
+            
+            statusElement.textContent = imageDataWithStatus.isSmoking ? 'Smoking detected!' : 'No smoking detected!';
+            imageContainer.appendChild(statusElement);
+
+            imageContainer.appendChild(deleteButton);
+
+
+            // Add the container to the image history
+            historyContainer.appendChild(imageContainer);
+            });
+        });
+
+        function removeImage(index) {
+            const imageHistory = JSON.parse(localStorage.getItem('imageHistory')) || [];
+            imageHistory.splice(index, 1);
+            localStorage.setItem('imageHistory', JSON.stringify(imageHistory));
+            window.location.reload();
+        }
+        </script>
+    </body>
+</html>
