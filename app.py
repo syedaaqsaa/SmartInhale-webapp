@@ -1,4 +1,4 @@
-from flask import Flask, render_template, Response, request, jsonify
+from flask import Flask, render_template, Response, request, jsonify, redirect
 import tensorflow as tf
 import cv2
 import numpy as np
@@ -10,7 +10,9 @@ import base64
 
 import sqlite3
 
-from flask_login import LoginManager, login_required, UserMixin, login_user, current_user
+from flask_login import LoginManager, login_required, UserMixin, login_user, logout_user, current_user,
+
+import datetime
 
 app = Flask(__name__)
 app.secret_key = 'abcdefghijklmnopqrstuy'
@@ -32,6 +34,14 @@ def load_user(user_id):
 
 connection = sqlite3.connect("FypDB.db", check_same_thread=False)
 
+def store_penalty(username: str):
+    cursor = connection.cursor()
+    cursor.execute("SELECT UserId from login WHERE Username = ?", (username,))
+    user_id = cursor.fetchone()[0]
+    print(user_id)
+    current_date = datetime.datetime.now()
+    cursor.execute("INSERT INTO penalties (UserId, PenaltyDate) VALUES (?, ?)", (user_id, current_date))
+    connection.commit()
 
 # Function to preprocess the frame before inference
 def preprocess_frame(frame):
@@ -93,25 +103,46 @@ def capture_photo():
     image = Image.open(io.BytesIO(image_data))
     img_array = np.array(image)
     is_smoking = detect_smoking(img_array)
+
+    if is_smoking:
+        username = get_username()
+        store_penalty(username)
     
     return jsonify({"is_smoking": bool(is_smoking)})
 
+def get_username():
+    username = None
+    try:
+        username = current_user.id
+    except:
+        pass
+
+    return username
+
 @app.route('/')
-@login_required
+# @login_required
 def home():
-    return render_template('index.html', username=current_user.id)
+    username = get_username()
+    
+    return render_template('index.html', username=username)
 
 @app.route('/detection')
 def detection():
-    return render_template("detection.html")
+    username = get_username()
+
+    return render_template("detection.html", username=username)
 
 @app.route('/history')
 def history():
-    return render_template("history.html")
+    username = get_username()
+
+    return render_template("history.html", username=username)
 
 @app.route('/contact')
 def contact():
-    return render_template("contact.html")
+    username = get_username()
+
+    return render_template("contact.html", username=username)
 
 @app.route('/sign-in', methods=["POST", "GET"])
 def signin():
@@ -142,7 +173,11 @@ def signin():
 
     return jsonify({"success": True})
 
+@app.route('/signout', methods=['GET'])
+def signout():
+    logout_user()
 
+    return redirect('/')
 
 @app.route('/sign-up', methods=['POST'])
 def signup():
@@ -158,7 +193,9 @@ def signup():
 
 @app.route('/story')
 def story():
-    return render_template("story.html")
+    username = get_username()
+
+    return render_template("story.html", username=username)
 
 @app.route('/upload_file', methods=['POST'])
 def upload_file():
@@ -173,10 +210,51 @@ def upload_file():
     img_array = np.array(img)
 
     is_smoking = detect_smoking(img_array)
+    # Store penalty in the database
+
+    if is_smoking:
+        username = get_username()
+        store_penalty(username)
+
     print("Smoking detected: ", is_smoking)
     return {
         "is_smoking": bool(is_smoking),
     }
+
+@app.route('/penalty')
+def penalty():
+    username = None
+    cursor = connection.cursor()
+    if current_user.is_authenticated:
+        username = get_username()
+        cursor.execute("SELECT UserId from login WHERE Username = ?", (username,))
+        user_id = cursor.fetchone()[0]
+        cursor.execute("SELECT * FROM penalties WHERE UserId = ?", (user_id,))
+        penalties = cursor.fetchall()
+    else:
+        cursor.execute("SELECT * FROM penalties")
+        penalties = cursor.fetchall()
+
+    # [(1, '2024 9:40 PM'), (2, '2024 3:40 PM'), (1, '2024 10:03 PM')]
+    displayed_penalties = []
+    for penalty in penalties:
+        user_id = penalty[0]
+        penalty_date = penalty[1]
+        datetime_object = datetime.datetime.strptime(penalty_date, '%Y-%m-%d %H:%M:%S.%f')
+        formatted_date = datetime_object.strftime('%H:%M:%S, %d-%m-%Y')
+
+        cursor.execute("SELECT Username from login WHERE UserId = ?", (user_id,))
+        penalty_username = cursor.fetchone()[0]
+
+
+        displayed_penalties.append({
+            "id": user_id,
+            "username": penalty_username,
+            "datetime": formatted_date
+        })
+    
+    return render_template("penalty.html", username=username, penalties=displayed_penalties)
+
 
 app.run(debug=True)
 

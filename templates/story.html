@@ -53,8 +53,11 @@ https://www.tooplate.com/view/2127-little-fashion
                     </a>
 
                     <div class="d-lg-none">
-                        <a href="{{ url_for('signin') }}" class="bi-person custom-icon me-3"></a>
-
+                        {% if username is not none %}
+                            <a href="{{ url_for('signout') }}" class="bi-box-arrow-left custom-icon me-3"></a>
+                        {% else %}
+                            <a href="{{ url_for('signin') }}" class="bi-person custom-icon me-3"></a>
+                        {% endif %}
                         <a href="{{ url_for('history') }}" class="fas fa-camera"></a>
                     </div>
 
@@ -77,13 +80,21 @@ https://www.tooplate.com/view/2127-little-fashion
                             </li>
 
                             <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('penalty') }}">Penalty</a>
+                            </li>
+
+                            <li class="nav-item">
                                 <a class="nav-link" href="{{ url_for('contact') }}">Contact</a>
                             </li>
+                            
                         </ul>
 
                         <div class="d-none d-lg-block">
-                            <a href="{{ url_for('signin') }}" class="bi-person custom-icon me-3"></a>
-
+                            {% if username is not none %}
+                                <a href="{{ url_for('signout') }}" class="bi-box-arrow-left custom-icon me-3"></a>
+                            {% else %}
+                                <a href="{{ url_for('signin') }}" class="bi-person custom-icon me-3"></a>
+                            {% endif %}
                             <a href="{{ url_for('detection') }}" class="bi-camera custom-icon"></a>
                         </div>
                     </div>
@@ -118,7 +129,7 @@ https://www.tooplate.com/view/2127-little-fashion
 
                         <div class="col-lg-4 mb-4 col-12">
                             <div class="team-thumb d-flex align-items-center">
-                                <img src="static/images/people/senior-man-wearing-white-face-mask-covid-19-campaign-with-design-space.jpeg" class="img-fluid custom-circle-image team-image me-4" alt="">
+                                <img src="/static/images/Aqsa.jpg" class="img-fluid custom-circle-image team-image me-4" alt="">
 
                                 <div class="team-info">
                                     <h5 class="mb-0">Syeda Aqsa</h5>
@@ -135,7 +146,7 @@ https://www.tooplate.com/view/2127-little-fashion
 
                         <div class="col-lg-4 mb-4 col-12">
                             <div class="team-thumb d-flex align-items-center">
-                                <img src="static/images/people/portrait-british-woman.jpeg" class="img-fluid custom-circle-image team-image me-4" alt="">
+                                <img src="/static/images/sara.jpg" class="img-fluid custom-circle-image team-image me-4" alt="">
 
                                 <div class="team-info">
                                     <h5 class="mb-0">Sara Qayyum</h5>

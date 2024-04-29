@@ -52,8 +52,11 @@ https://www.tooplate.com/view/2127-little-fashion
                     </a>
 
                     <div class="d-lg-none">
-                        <a href="{{ url_for('signin') }}" class="bi-person custom-icon me-3"></a>
-
+                        {% if username is not none %}
+                            <a href="{{ url_for('signout') }}" class="bi-box-arrow-left custom-icon me-3"></a>
+                        {% else %}
+                            <a href="{{ url_for('signin') }}" class="bi-person custom-icon me-3"></a>
+                        {% endif %}
                         <a href="{{ url_for('history') }}" class="fas fa-camera"></a>
                     </div>
 
@@ -76,13 +79,25 @@ https://www.tooplate.com/view/2127-little-fashion
                             </li>
 
                             <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('penalty') }}">Penalty</a>
+                            </li>
+
+                            <li class="nav-item">
                                 <a class="nav-link" href="{{ url_for('contact') }}">Contact</a>
                             </li>
+
+                            
+                            
+
+
                         </ul>
 
                         <div class="d-none d-lg-block">
-                            <a href="{{ url_for('signin') }}" class="bi-person custom-icon me-3"></a>
-
+                            {% if username is not none %}
+                                <a href="{{ url_for('signout') }}" class="bi-box-arrow-left custom-icon me-3"></a>
+                            {% else %}
+                                <a href="{{ url_for('signin') }}" class="bi-person custom-icon me-3"></a>
+                            {% endif %}
                             <a href="{{ url_for('detection') }}" class="bi-camera custom-icon"></a>
                         </div>
                     </div>
@@ -97,7 +112,11 @@ https://www.tooplate.com/view/2127-little-fashion
                         <div class="container">
                             <div class="row">
                                 <div class="col-lg-6 col-10">
+                                    {% if username is not none %}
                                     <p>Welcome back, {{username}}</p>
+                                    {% else %}
+                                    <p>Welcome</p>
+                                    {% endif %}
                                     <h1 class="slick-title">Real-time analysis</h1>
 
                                     <p class="lead text-white mt-lg-3 mb-lg-5">Utilizing cutting-edge technology, it performs real-time analysis of cigarette images, identifying smoking behavior with accuracy and efficiency.</p>

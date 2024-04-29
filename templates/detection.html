@@ -466,10 +466,13 @@ margin-top: 5px;
       </a>
 
       <div class="d-lg-none">
-          <a href="{{ url_for('signin') }}" class="bi-person custom-icon me-3"></a>
-
-          <a href="{{ url_for('history') }}" class="fas fa-camera"></a>
-      </div>
+        {% if username is not none %}
+            <a href="{{ url_for('signout') }}" class="bi-box-arrow-left custom-icon me-3"></a>
+        {% else %}
+            <a href="{{ url_for('signin') }}" class="bi-person custom-icon me-3"></a>
+        {% endif %}
+        <a href="{{ url_for('history') }}" class="fas fa-camera"></a>
+    </div>
 
       <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav mx-auto">
@@ -492,11 +495,17 @@ margin-top: 5px;
               <li class="nav-item">
                   <a class="nav-link" href="{{ url_for('contact') }}">Contact</a>
               </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('penalty') }}">Penalty</a>
+            </li>
           </ul>
 
           <div class="d-none d-lg-block">
-            <a href="{{ url_for('signin') }}" class="bi-person custom-icon me-3"></a>
-
+            {% if username is not none %}
+                <a href="{{ url_for('signout') }}" class="bi-box-arrow-left custom-icon me-3"></a>
+            {% else %}
+                <a href="{{ url_for('signin') }}" class="bi-person custom-icon me-3"></a>
+            {% endif %}
             <a href="{{ url_for('detection') }}" class="bi-camera custom-icon"></a>
         </div>
       </div>
@@ -611,7 +620,7 @@ margin-top: 5px;
 
         // Add the image data to the image history
         imageHistory.push(imageDataWithStatus);
-python
+
         localStorage.setItem('imageHistory', JSON.stringify(imageHistory));
     })
     .catch((error) => {
@@ -685,3 +694,5 @@ function playSound() {
 
     </body>
 </html>
+
+
